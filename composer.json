@@ -1,0 +1,32 @@
+{
+    "name": "http/hhttp",
+    "description": "用于http 接收与转发 日志留存",
+    "type": "library",
+    "require": {
+        "php": "^7.2.5 || ^8.0",
+        "laravel/framework": "*",
+        "guzzlehttp/guzzle": "^7.4",
+        "ext-json": "*",
+        "cloudladder/http": "^1.2"
+    },
+    "license": "Apache-2.0",
+    "keywords": [
+        "hhttp"
+    ],
+    "autoload": {
+        "psr-4": {
+            "hhttp\\io\\": "src/"
+        },
+        "files": [
+            "src/helpers.php"
+        ]
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "hhttp\\io\\IoServiceProvider",
+                "hhttp\\io\\IoEventServiceProvider"
+            ]
+        }
+    }
+}
