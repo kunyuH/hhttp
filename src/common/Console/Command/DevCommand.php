@@ -1,6 +1,6 @@
 <?php
 
-namespace Hhttp\io\common\Console\Command;
+namespace hhttp\io\common\Console\Command;
 
 use hhttp\io\common\Models\ApiLogModel;
 use hhttp\io\common\Models\HttpLogModel;

@@ -1,30 +1,9 @@
 <?php
+namespace hhttp\io;
 
-
-use Hhttp\io\common\Console\Command\DevCommand;
-use Hhttp\io\common\Console\Command\LogClean;
-use Hhttp\io\common\Console\Command\RunCodeCommand;
-use Hhttp\io\common\Enums\SessionEnum;
-use Hhttp\io\common\Middleware\ApiLogMid;
-use Hhttp\io\common\Middleware\LoadConfig;
-use Hhttp\io\gateway\GatewayFirstMiddleware;
-use Hhttp\io\gateway\GatewayLastMiddleware;
-use Hhttp\io\monitor\hm\Controllers\HHttpViewerController;
-use Hhttp\io\monitor\hm\Controllers\LogViewerController;
-use Hhttp\io\monitor\hm\Controllers\SqlViewerController;
-use Hhttp\io\monitor\hm\Models\LogicalPipelinesModel;
-use Hhttp\io\common\Support\Facade\HooSession;
-use Hhttp\io\database\services\BuilderMacroSql;
-use Hhttp\io\common\Middleware\HooMid;
-use Hhttp\io\monitor\hm\Controllers\LogicalBlockController;
-use Hhttp\io\monitor\hm\Controllers\IndexController;
-use Hhttp\io\monitor\hm\Controllers\LogicalPipelinesController;
-use Hhttp\io\monitor\hm\Controllers\HooLogController;
-use Hhttp\io\monitor\hm\Controllers\LoginController;
-use Hhttp\io\monitor\hm\Middleware\HmAuth;
-use Hhttp\io\monitor\hm\Services\LogicalPipelinesApiRunService;
-use Hhttp\io\gateway\GatewayController;
-use Hhttp\io\gateway\GatewayMiddleware;
+use hhttp\io\common\Console\Command\DevCommand;
+use hhttp\io\common\Console\Command\LogClean;
+use hhttp\io\common\Middleware\ApiLogMid;
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -53,7 +32,7 @@ class IoServiceProvider extends ServiceProvider
             $this->registerCommands();
 
             # 在所有服务提供者 boot 完成后执行【用于覆盖之前注册的路由 已动态注册路由为第一优先级】
-            \hoo\io\app()->booted(function () {
+            app()->booted(function () {
                 /**
                  * 动态注册路由
                  */
@@ -109,7 +88,7 @@ class IoServiceProvider extends ServiceProvider
 
     public function registerConfig()
     {
-        $key = 'hoo-io';
+        $key = 'hhttp';
         $path = __DIR__."/config/{$key}.php";
 
         if (! $this->app->configurationIsCached()) {

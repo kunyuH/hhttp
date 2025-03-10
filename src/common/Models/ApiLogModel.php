@@ -38,7 +38,7 @@ class ApiLogModel extends BaseModel
             # 检验是否存在http日志表
             if (hoo_schema()->hasTable($this->getTable())) {
                 # 字符串长度超出 则只截取长度以内的字符
-                $HM_API_HTTP_LOG_LENGTH = Config::get('hoo-io.HM_API_HTTP_LOG_LENGTH');
+                $HM_API_HTTP_LOG_LENGTH = Config::get('hhttp.HM_API_HTTP_LOG_LENGTH');
 
                 if (strlen($input) > $HM_API_HTTP_LOG_LENGTH) {
                     $input = "长度超出，截取部分==>".mb_substr($input, 0, $HM_API_HTTP_LOG_LENGTH, "UTF-8")."...";
@@ -47,10 +47,11 @@ class ApiLogModel extends BaseModel
                 if (strlen($output) > $HM_API_HTTP_LOG_LENGTH) {
                     $output = "长度超出，截取部分==>".mb_substr($output, 0, $HM_API_HTTP_LOG_LENGTH, "UTF-8")."...";
                 }
+       
                 self::insert([
                     'app_name'=>$_SERVER['APP_NAME']??'',
                     'hoo_traceid'=>ContextService::getHooTraceId(),
-                    'user_id'=>$request->input(Config::get('hoo-io.HM_API_LOG_USER_FILED'),''),
+                    'user_id'=>$request->input(Config::get('hhttp.HP_API_LOG_USER_FILED'),''),
                     'domain'=>$request->getHost().':'.$request->getPort(),
                     'path'=>$path,
                     'method'=>$request->method(),
@@ -63,7 +64,7 @@ class ApiLogModel extends BaseModel
                     'created_at'=>date('Y-m-d H:i:s'),
                 ]);
             }
-        }catch (\Throwable $e){}
+        }catch (\Throwable $e){             }
     }
     /**
      * 是否记录api日志
@@ -73,10 +74,10 @@ class ApiLogModel extends BaseModel
     {
 
         # true 不记录api 日志
-        if(!Config::get('hoo-io.HM_API_LOG')){
+        if(!Config::get('hhttp.HP_API_LOG')){
             return false;
         }
-        $not_routes = Config::get('hoo-io.HM_API_LOG_NOT_ROUTE');
+        $not_routes = Config::get('hhttp.HP_API_LOG_NOT_ROUTE');
         $not_routes = explode(',',$not_routes);
 
         # 允许不记录日志的路由  匹配 存在则直接返回false

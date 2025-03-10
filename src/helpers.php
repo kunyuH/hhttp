@@ -7,8 +7,8 @@ use Illuminate\Support\Facades\Schema;
 if (! function_exists('jump_link')) {
     function jump_link($url)
     {
-        if(!empty(Config::get('hoo-io.SERVICE_NAME'))){
-            return "/".Config::get('hoo-io.SERVICE_NAME')."$url";
+        if(!empty(Config::get('hhttp.SERVICE_NAME'))){
+            return "/".Config::get('hhttp.SERVICE_NAME')."$url";
         }else{
             return $url;
         }
@@ -25,8 +25,8 @@ if (! function_exists('get_cdn')) {
 if (! function_exists('hoo_schema')) {
     function hoo_schema()
     {
-        if(config('hoo-io.HOO_DATABASE_DEFAULT')) {
-            return Schema::connection(config('hoo-io.HOO_DATABASE_DEFAULT'));
+        if(config('hhttp.HOO_DATABASE_DEFAULT')) {
+            return Schema::connection(config('hhttp.HP_DATABASE_DEFAULT'));
         }else{
             return Schema::connection(null);
         }

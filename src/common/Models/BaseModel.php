@@ -16,8 +16,8 @@ class BaseModel extends Model
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
-        if(config('hoo-io.HOO_DATABASE_DEFAULT')){
-            $this->connection = config('hoo-io.HOO_DATABASE_DEFAULT'); // 从配置文件动态获取连接
+        if(config('hhttp.HP_DATABASE_DEFAULT')){
+            $this->connection = config('hhttp.HP_DATABASE_DEFAULT'); // 从配置文件动态获取连接
         }
     }
 

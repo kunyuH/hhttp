@@ -31,7 +31,7 @@ class HttpLogModel extends BaseModel
         # 检验是否存在http日志表
         if (hoo_schema()->hasTable($this->getTable())) {
             # 字符串长度超出 则只截取长度以内的字符
-            $HM_API_HTTP_LOG_LENGTH = Config::get('hoo-io.HM_API_HTTP_LOG_LENGTH');
+            $HM_API_HTTP_LOG_LENGTH = Config::get('hhttp.HM_API_HTTP_LOG_LENGTH');
 
             if (strlen($options) > $HM_API_HTTP_LOG_LENGTH) {
                 $options = "长度超出，截取部分==>".mb_substr($options, 0, $HM_API_HTTP_LOG_LENGTH, "UTF-8")."...";
@@ -64,11 +64,11 @@ class HttpLogModel extends BaseModel
     private function isRecord()
     {
         # true 已开启HHTTP日志记录
-        if(Config::get('hoo-io.HM_HTTP_LOG')){
+        if(Config::get('hhttp.HP_HTTP_LOG')){
             # true 命令行情况下
             if(App::runningInConsole()){
                 # true 命令行开启HHTTP日志记录
-                if(Config::get('hoo-io.HM_COMMAND_HTTP_LOG')){
+                if(Config::get('hhttp.HP_COMMAND_HTTP_LOG')){
                     return true;
                 }else{
                     return false;

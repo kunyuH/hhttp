@@ -1,5 +1,5 @@
 <?php
-
+namespace hhttp\io;
 
 use Illuminate\Console\Events\CommandFinished;
 use Illuminate\Database\Events\QueryExecuted;
