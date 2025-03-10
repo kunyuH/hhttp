@@ -1,5 +1,5 @@
 {
-    "name": "http/hhttp",
+    "name": "hhttp/io",
     "description": "用于http 接收与转发 日志留存",
     "type": "library",
     "require": {
