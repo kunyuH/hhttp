@@ -8,7 +8,7 @@ use hhttp\io\common\Listeners\LogRequestHandledListener;
 use Illuminate\Foundation\Http\Events\RequestHandled;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
-class IoEventServiceProvider extends ServiceProvider
+class HhttpEventServiceProvider extends ServiceProvider
 {
     /**
      * The event listener mappings for the application.

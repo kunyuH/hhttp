@@ -15,7 +15,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Exception;
 
-class IoServiceProvider extends ServiceProvider
+class HhttpServiceProvider extends ServiceProvider
 {
 
     public function boot()
