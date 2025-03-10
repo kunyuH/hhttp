@@ -24,8 +24,8 @@
     "extra": {
         "laravel": {
             "providers": [
-                "hhttp\\io\\IoServiceProvider",
-                "hhttp\\io\\IoEventServiceProvider"
+                "hhttp\\io\\HhttpServiceProvider",
+                "hhttp\\io\\HhttpEventServiceProvider"
             ]
         }
     }
