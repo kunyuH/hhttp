@@ -121,7 +121,7 @@ abstract class AHttpService
         $before_time = microtime(true);
         try {
 
-            $client = new Client();
+            $client = new HHttp();
             $response = $client->request($this->method, $this->url, [
                 'headers' => $this->headers,
                 'query' => $this->params,
