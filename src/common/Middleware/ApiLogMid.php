@@ -59,16 +59,20 @@ class ApiLogMid
 
     private function getOutput(Response $response)
     {
-        $output = $response->getContent();
-        if($output == ''){
-            $output = [];
-        }elseif(is_json($output)){
-            $output = json_decode($output,JSON_UNESCAPED_UNICODE);
-        }else{
-            # 截取50个字符
-            $output = ['非json格式，截取部分字符：'.mb_substr($output, 0, 50, 'utf-8')];
+        try{
+            $output = $response->getContent();
+            if($output == ''){
+                $output = [];
+            }elseif(is_json($output)){
+                $output = json_decode($output,JSON_UNESCAPED_UNICODE);
+            }else{
+                # 截取50个字符
+                $output = ['非json格式，截取部分字符：'.mb_substr($output, 0, 50, 'utf-8')];
+            }
+            return $output;
+        }catch (\Throwable $e){
+            return ['返回数据异常！'];
         }
-        return $output;
     }
 
     /**
