@@ -57,7 +57,7 @@ class ApiLogMid
         return $response;
     }
 
-    private function getOutput(Response $response)
+    private function getOutput($response)
     {
         try{
             $output = $response->getContent();
