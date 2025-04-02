@@ -40,6 +40,7 @@ class HttpLogModel extends BaseModel
             if (strlen($resStr) > $HM_API_HTTP_LOG_LENGTH) {
                 $resStr = "长度超出，截取部分==>".mb_substr($resStr, 0, $HM_API_HTTP_LOG_LENGTH, "UTF-8")."...";
             }
+            dd(1);
             self::insert([
                 'app_name'=>$_SERVER['APP_NAME']??'',
                 'hoo_traceid'=>ContextService::getHooTraceId(),

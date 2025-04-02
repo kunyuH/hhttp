@@ -4,6 +4,23 @@ namespace hhttp\io;
 use hhttp\io\common\Console\Command\DevCommand;
 use hhttp\io\common\Console\Command\LogClean;
 use hhttp\io\common\Middleware\ApiLogMid;
+use hhttp\io\common\Enums\SessionEnum;
+use hhttp\io\common\Support\Facade\HooSession;
+use hhttp\io\common\Middleware\HooMid;
+use hhttp\io\common\Middleware\LoadConfig;
+use hhttp\io\gateway\GatewayFirstMiddleware;
+use hhttp\io\gateway\GatewayLastMiddleware;
+use hhttp\io\gateway\GatewayMiddleware;
+use hhttp\io\monitor\hm\Middleware\HmAuth;
+use hhttp\io\gateway\GatewayController;
+use hhttp\io\monitor\hm\Controllers\HHttpViewerController;
+use hhttp\io\monitor\hm\Controllers\HooLogController;
+use hhttp\io\monitor\hm\Controllers\IndexController;
+use hhttp\io\monitor\hm\Controllers\LogicalBlockController;
+use hhttp\io\monitor\hm\Controllers\LogicalPipelinesController;
+use hhttp\io\monitor\hm\Controllers\LoginController;
+use hhttp\io\monitor\hm\Controllers\LogViewerController;
+use hhttp\io\monitor\hm\Controllers\SqlViewerController;
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -22,9 +39,19 @@ class HhttpServiceProvider extends ServiceProvider
     {
         try{
             /**
+             * 注册权限
+             */
+            $this->registerAuth();
+
+            /**
              * 注册中间件
              */
             $this->registerMiddleware();
+
+            /**
+             * 注册 路由
+             */
+            $this->registerWebRoutes();
 
             /**
              * 注册命令
@@ -42,6 +69,44 @@ class HhttpServiceProvider extends ServiceProvider
         }catch (\Exception $e){}
     }
 
+    /**
+     * 注册权限
+     * @return void
+     */
+    public function registerAuth()
+    {
+        /**
+         * 定义权限 是否登录
+         */
+        Gate::define('hooAuth', function ($user = null) {
+            # true 设置不开启 默认开启
+            if(empty(Config::get('hhttp.HP_ENABLE'))){
+                return false;
+            }
+            # true 设置是否开启登录校验
+            if(empty(Config::get('hhttp.IS_LOGIN'))){
+                return true;
+            }
+            if(!\hoo\io\common\Support\Facade\HooSession::get(\hoo\io\common\Enums\SessionEnum::USER_INFO_KEY)){
+                return false;
+            }
+            /**
+             * 限制环境
+             * local 开发环境可进
+             * test 测试环境可进
+             * production 生产环境 且请求头中有灰度标识可进
+             * 其它环境不可进
+             */
+            if(!in_array(env('APP_ENV'), ['local', 'test', 'production'])) {
+                return false;
+            }
+            if(env('APP_ENV') == 'production' && request()->header('x1-gp-color') != 'gray') {
+                return false;
+            }
+            return true;
+        });
+    }
+
     public function register()
     {
         try{
@@ -50,7 +115,6 @@ class HhttpServiceProvider extends ServiceProvider
 
         }catch (Exception $e){}
     }
-
 
     /**
      * 注册中间件
@@ -61,7 +125,14 @@ class HhttpServiceProvider extends ServiceProvider
     {
         //注册中间件-默认运行
         $kernel = $this->app->make(Kernel::class);
+        $kernel->pushMiddleware(LoadConfig::class);
         $kernel->pushMiddleware(ApiLogMid::class);
+        $kernel->pushMiddleware(HooMid::class);
+        //注册中间件-路由中引用执行【鉴权中间件】
+        Route::aliasMiddleware('hhttp.auth',HmAuth::class);
+        Route::aliasMiddleware('hhttp.gateway.first',GatewayFirstMiddleware::class);
+        Route::aliasMiddleware('hhttp.gateway',GatewayMiddleware::class);
+        Route::aliasMiddleware('hhttp.gateway.last',GatewayLastMiddleware::class);
     }
 
     /**
@@ -96,5 +167,106 @@ class HhttpServiceProvider extends ServiceProvider
                 require $path, $this->app['config']->get($key, [])
             ));
         }
+    }
+
+    /**
+     * 注册 路由
+     * @return void
+     */
+    public function registerWebRoutes()
+    {
+        /**
+         * 服务代理
+         */
+        Route::prefix('api/gateway')
+            ->middleware([
+                'hhttp.gateway.first',
+                'hhttp.gateway',
+                'hhttp.gateway.last',
+            ])
+            ->group(function (){
+                Route::post('send', [GatewayController::class, 'gateway']);
+            });
+
+//        Route::prefix('hm')->group(function (){
+//
+//            Route::post('login', [LoginController::class,'login']);
+//            Route::post('logout', [LoginController::class,'logout']);
+//            Route::prefix('login')->group(function (){
+//                Route::get('index',[LoginController::class,'index']);
+//            });
+//
+//            Route::middleware('hoo.auth')->group(function (){
+//
+//                Route::get('index',[IndexController::class,'index']);
+//                Route::post('send-command',[IndexController::class,'sendCommand']);
+//
+//                Route::get('run-command',[IndexController::class,'runCommand']);
+//                Route::post('run-command',[IndexController::class,'runCommand']);
+//
+//                Route::prefix('hoo-log')->group(function (){
+//                    Route::get('index',[HooLogController::class,'index']);
+//                    Route::get('get-path-tree',[HooLogController::class,'getPathTree']);
+//                    Route::get('search',[HooLogController::class,'search']);
+//                    Route::get('del',[HooLogController::class,'del']);
+//                });
+//
+//                Route::prefix('log-viewer')->group(function (){
+//                    Route::get('index',[LogViewerController::class,'index']);
+//                    Route::get('seven-visits',[LogViewerController::class,'sevenVisits']);
+//                    Route::get('details',[LogViewerController::class,'details']);
+//                    Route::get('service-statistics-item',[LogViewerController::class,'serviceStatisticsItem']);
+//                    Route::post('show-log',[LogViewerController::class,'showLog']);
+//                    Route::get('seven-visits-item',[LogViewerController::class,'sevenVisitsItem']);
+//                    Route::get('disk-usage',[LogViewerController::class,'diskUsage']);
+//                    Route::get('bandwidth-statistics-item',[LogViewerController::class,'bandwidthStatisticsItem']);
+//                });
+//
+//                Route::prefix('hhttp-log-viewer')->group(function (){
+//                    Route::get('index',[HHttpViewerController::class,'index']);
+//                    Route::get('seven-visits',[HHttpViewerController::class,'sevenVisits']);
+//                    Route::get('details',[HHttpViewerController::class,'details']);
+//                    Route::get('service-statistics-item',[HHttpViewerController::class,'serviceStatisticsItem']);Route::get('seven-visits-item',[LogViewerController::class,'sevenVisitsItem']);
+//                    Route::get('seven-visits-item',[HHttpViewerController::class,'sevenVisitsItem']);
+//                });
+//
+//                Route::prefix('sql-log-viewer')->group(function (){
+//                    Route::get('index',[SqlViewerController::class,'index']);
+//                    Route::get('seven-visits',[SqlViewerController::class,'sevenVisits']);
+//                    Route::get('details',[SqlViewerController::class,'details']);
+//                    Route::get('service-statistics-item',[SqlViewerController::class,'serviceStatisticsItem']);
+//                });
+//
+//                Route::prefix('logical-block')->group(function (){
+//                    Route::get('index',[LogicalBlockController::class,'index']);
+////                    Route::get('list',[LogicalBlockController::class,'list']);
+//                    Route::get('detail',[LogicalBlockController::class,'detail']);
+//                    Route::post('save',[LogicalBlockController::class,'save']);
+//                    Route::post('delete',[LogicalBlockController::class,'delete']);
+//                    Route::post('run',[LogicalBlockController::class,'run']);
+//                    Route::post('copy-new',[LogicalBlockController::class,'copyNew']);
+//                    Route::get('copy',[LogicalBlockController::class,'copy']);
+//                    Route::get('paste',[LogicalBlockController::class,'paste']);
+//                    Route::post('paste',[LogicalBlockController::class,'paste']);
+//                });
+//
+//                Route::prefix('logical-pipelines')->group(function (){
+//                    Route::get('index',[LogicalPipelinesController::class,'index']);
+//                    Route::get('save',[LogicalPipelinesController::class,'save']);
+//                    Route::post('save',[LogicalPipelinesController::class,'save']);
+//                    Route::post('delete',[LogicalPipelinesController::class,'delete']);
+//                    Route::post('run',[LogicalPipelinesController::class,'run']);
+//                    Route::get('arrange',[LogicalPipelinesController::class,'arrange']);
+//                    Route::get('add-arrange-item',[LogicalPipelinesController::class,'addArrangeItem']);
+//                    Route::post('add-arrange-item',[LogicalPipelinesController::class,'addArrangeItem']);
+//                    Route::post('delete-arrange',[LogicalPipelinesController::class,'arrangeDelete']);
+//                    Route::post('edit-arrange',[LogicalPipelinesController::class,'arrangeEdit']);
+//                });
+//            });
+//        });
+//
+//        Route::prefix('hm-r')->group(function (){
+//            Route::get('{path}',[IndexController::class,'webAsset'])->where('path', '.+');
+//        });
     }
 }

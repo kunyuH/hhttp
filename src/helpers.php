@@ -25,7 +25,7 @@ if (! function_exists('get_cdn')) {
 if (! function_exists('hoo_schema')) {
     function hoo_schema()
     {
-        if(config('hhttp.HOO_DATABASE_DEFAULT')) {
+        if(config('hhttp.HP_DATABASE_DEFAULT')) {
             return Schema::connection(config('hhttp.HP_DATABASE_DEFAULT'));
         }else{
             return Schema::connection(null);

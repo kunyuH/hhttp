@@ -2,21 +2,23 @@
 
 namespace hhttp\io\common\Services;
 
+use hhttp\io\monitor\hm\Models\LogicalBlockModel;
+use Illuminate\Support\Str;
 
 /**
  * 用于存储上下文信息
  */
 class ContextService extends BaseService
 {
-    
+
     private static $context = [];
-    
+
     public static function set($key,$value)
     {
         self::$context[$key] = $value;
         return true;
     }
-    
+
     public static function get($key)
     {
         return self::$context[$key]??null;
@@ -26,8 +28,8 @@ class ContextService extends BaseService
     {
         unset(self::$context[$key]);
     }
-    
-    
+
+
     /**
      * 服务运行流水号 用于运行链路追踪
      * 比如 http日志
@@ -59,5 +61,19 @@ class ContextService extends BaseService
     }
     public static function clearSqlLog(){
         self::$sql_log = [];
+    }
+
+    /**
+     * 判断是否安装了逻辑块 模块
+     * @return bool
+     * @return void
+     */
+    public static $Logical_block = null;
+    public static function isLogicalBlockInstall()
+    {
+        if(self::$Logical_block === null){
+            self::$Logical_block = hoo_schema()->hasTable((new LogicalBlockModel())->getTable());
+        }
+        return self::$Logical_block;
     }
 }
