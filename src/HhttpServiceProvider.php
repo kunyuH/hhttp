@@ -87,7 +87,7 @@ class HhttpServiceProvider extends ServiceProvider
             if(empty(Config::get('hhttp.IS_LOGIN'))){
                 return true;
             }
-            if(!\hoo\io\common\Support\Facade\HooSession::get(\hoo\io\common\Enums\SessionEnum::USER_INFO_KEY)){
+            if(!\hhttp\io\common\Support\Facade\HooSession::get(\hhttp\io\common\Enums\SessionEnum::USER_INFO_KEY)){
                 return false;
             }
             /**
@@ -147,7 +147,7 @@ class HhttpServiceProvider extends ServiceProvider
 //            # 无侵入实现在自定义的Console\Kernel 内定义定时
 //            $this->app->singleton(
 //                \Illuminate\Contracts\Console\Kernel::class,
-//                \hoo\io\common\Console\Kernel::class
+//                \hhttp\io\common\Console\Kernel::class
 //            );
 
             $this->commands([
@@ -196,7 +196,7 @@ class HhttpServiceProvider extends ServiceProvider
 //                Route::get('index',[LoginController::class,'index']);
 //            });
 //
-//            Route::middleware('hoo.auth')->group(function (){
+//            Route::middleware('hhttp.auth')->group(function (){
 //
 //                Route::get('index',[IndexController::class,'index']);
 //                Route::post('send-command',[IndexController::class,'sendCommand']);

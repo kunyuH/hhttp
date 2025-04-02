@@ -1,6 +1,6 @@
 <?php
 
-namespace hoo\io\common\Enums;
+namespace hhttp\io\common\Enums;
 
 final class SessionEnum
 {

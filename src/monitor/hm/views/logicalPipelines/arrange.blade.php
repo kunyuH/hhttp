@@ -1,6 +1,6 @@
 <?php
 
-use hoo\io\monitor\hm\Enums\LogicalPipelinesArrangeEnums;
+use hhttp\io\monitor\hm\Enums\LogicalPipelinesArrangeEnums;
 
 ?>
 <div class="row">

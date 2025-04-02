@@ -6,7 +6,7 @@ use hhttp\io\common\Models\LogsModel;
 use hhttp\io\monitor\hm\Request\IndexRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
-use hoo\io\common\Support\Facade\HooSession;
+use hhttp\io\common\Support\Facade\HooSession;
 
 
 class IndexController extends BaseController

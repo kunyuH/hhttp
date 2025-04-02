@@ -11,10 +11,10 @@ class GatewayController extends BaseController
     /**
      * 服务代理
      * @param Request $request
-     * @param \hoo\io\gateway\HttpService $HttpService
+     * @param \hhttp\io\gateway\HttpService $HttpService
      * @return InnerResource
      * @throws \GuzzleHttp\Exception\GuzzleException
-     * @throws \hoo\io\common\Exceptions\HooException
+     * @throws \hhttp\io\common\Exceptions\HooException
      */
     public function gateway(Request $request, HttpService $HttpService): InnerResource
     {

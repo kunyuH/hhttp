@@ -34,7 +34,7 @@ class HooLogController extends BaseController
      * 日志搜索
      * @param Request $request
      * @return string
-     * @throws \hoo\io\common\Exceptions\HooException
+     * @throws \hhttp\io\common\Exceptions\HooException
      */
     public function search(Request $request)
     {
