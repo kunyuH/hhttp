@@ -45,6 +45,13 @@ $res = (new HHttp())->post(
     ]
 );
 $data = $res->getBody()->getContents()
+
+$uri = rtrim(config('apis.family_doctor.url'), DIRECTORY_SEPARATOR) . '/innerapi/xxx';
+$res = (new HHttp())->get(
+    uri: $uri,
+    options: ['query' => $sign_data]
+);
+$data = json_decode($res->getBody()->getContents(),true);
 ```
 
 

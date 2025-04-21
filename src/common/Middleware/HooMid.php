@@ -4,7 +4,6 @@ namespace hhttp\io\common\Middleware;
 
 use Closure;
 use hhttp\io\common\Support\Facade\HooSession;
-use hhttp\io\monitor\ArcanedevLogViewer\ArcanedevLogViewerService;
 use hhttp\io\monitor\clockwork\ClockworkService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
@@ -71,11 +70,6 @@ class HooMid
          * gupo 日志中心 改造的clockwork 展示异常处理 修复异常报错
          */
         $response = (new ClockworkService())->gupoClockErrorCorrect($request,$response);
-
-        /**
-         * gupo 日志中心 改造 ArcanedevLogViewer 日志view页面 静态资源链接替换，防止无法访问
-         */
-        $response = (new ArcanedevLogViewerService())->replaceStaticResourceLink($request,$response,$reqPath);
 
         return $response;
     }
