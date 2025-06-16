@@ -19,10 +19,10 @@ class SqlLogModel extends BaseModel
      * @param $sql
      * @return void
      */
-    public function log($run_time,$database,$connection_name,$sql)
+    public function log($run_time, $database, $connection_name, $sql)
     {
         # true 未开启sql日志记录
-        if(!$this->isRecord()){
+        if (!$this->isRecord()) {
             return;
         }
 
@@ -31,25 +31,25 @@ class SqlLogModel extends BaseModel
             $this->getTableName(),
             (new HttpLogModel())->getTableName(),
             (new ApiLogModel())->getTableName()
-        ],$sql)) {
+        ], $sql)) {
 
             # 字符串长度超出 则只截取长度以内的字符
             $HM_API_HTTP_LOG_LENGTH = Config::get('hhttp.HM_API_HTTP_LOG_LENGTH');
 
             if (strlen($sql) > $HM_API_HTTP_LOG_LENGTH) {
-                $sql = "长度超出，截取部分==>".mb_substr($sql, 0, $HM_API_HTTP_LOG_LENGTH, "UTF-8")."...";
+                $sql = "长度超出，截取部分==>" . mb_substr($sql, 0, $HM_API_HTTP_LOG_LENGTH, "UTF-8") . "...";
             }
             # 暂存到上下文中
             ContextService::setSqlLog([
-                'app_name'=>$_SERVER['APP_NAME']??'',
-                'hoo_traceid'=>ContextService::getHooTraceId(),
-                'run_time'=>$run_time,
-                'database'=>$database,
-                'connection_name'=>$connection_name,
-                'sql'=>$sql,
-                'run_trace'=>get_run_trace(),
-                'run_path'=>get_run_path(),
-                'created_at'=>date('Y-m-d H:i:s'),
+                'app_name' => $_SERVER['APP_NAME'] ?? '',
+                'hoo_traceid' => ContextService::getHooTraceId(),
+                'run_time' => $run_time,
+                'database' => $database,
+                'connection_name' => $connection_name,
+                'sql' => $sql,
+                'run_trace' => get_run_trace(),
+                'run_path' => get_run_path(),
+                'created_at' => date('Y-m-d H:i:s'),
             ]);
         }
     }
@@ -61,13 +61,13 @@ class SqlLogModel extends BaseModel
     public function logSave()
     {
         # true 未开启sql日志记录
-        if(!$this->isRecord()){
+        if (!$this->isRecord()) {
             return;
         }
         # 检验是否存在http日志表
         if (hoo_schema()->hasTable($this->getTable())) {
             $sql_log = ContextService::getSqlLog();
-            if ($sql_log){
+            if ($sql_log) {
                 self::insert($sql_log);
                 # 清空暂存区
                 ContextService::clearSqlLog();
@@ -82,20 +82,28 @@ class SqlLogModel extends BaseModel
     private function isRecord()
     {
         # true 已开启HHTTP日志记录
-        if(Config::get('hhttp.HP_SQL_LOG')){
-            # true 命令行情况下
-            if(App::runningInConsole()){
-                # true 命令行开启HHTTP日志记录
-                if(Config::get('hhttp.HP_SQL_COMMAND_LOG')){
-                    return true;
-                }else{
+        if (!Config::get('hhttp.HP_SQL_LOG')) {
+            return false;
+        }
+
+        # true 命令行情况下
+        if (App::runningInConsole()) {
+            # true 命令行开启HHTTP日志记录
+            if (Config::get('hhttp.HP_SQL_COMMAND_LOG')) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            $not_routes = Config::get('hhttp.HP_SQL_LOG_NOT_ROUTE');
+            $not_routes = explode(',', $not_routes);
+            # 允许不记录日志的路由  匹配 存在则直接返回false
+            foreach ($not_routes as $route) {
+                if (ho_fnmatchs($route, get_run_path())) {
                     return false;
                 }
-            }else{
-                return true;
             }
+            return true;
         }
-        return false;
     }
 }
-

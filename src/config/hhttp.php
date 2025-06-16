@@ -12,31 +12,33 @@ return [
 
     'SERVICE_NAME'=>env('SERVICE_NAME', ''),    //服务前缀
     #---------------------------------------------------
-    
+
     #--------------------动态从逻辑块中加载配置-------------------
     'HP_LOAD_CONFIG_ENABLE'=>env('HP_LOAD_CONFIG_ENABLE', false),            //是否启用动态从逻辑块中加载配置
     'HP_LOGICAL_BLOCK_OBJECT_ID'=>env('HP_LOGICAL_BLOCK_OBJECT_ID', 'c9cf7d34-8294-b348-0796-94718ae48f0d'),  //逻辑块对象id
     #---------------------------------------------------
-    
+
     #--------------------api与依赖服务接口请求日志【api hhttp sql】--------------------------
     'HP_DATABASE_DEFAULT'=>env('HP_DATABASE_DEFAULT', null),    //数据连接 不填写则默认mysql
-    
+
     # api日志开关 是否记录
     'HP_API_LOG'=>env('HP_API_LOG', true),
     # 默认api日志中user_id 提取 request 对象内的属性
     'HP_API_LOG_USER_FILED'=>env('HP_API_LOG_USER_FILED', 'member_id'),
     # 允许不记录日志的路由
-    'HP_API_LOG_NOT_ROUTE'=>env('HP_API_LOG_NOT_ROUTE',''),
+    'HP_API_LOG_NOT_ROUTE'=>env('HP_API_LOG_NOT_ROUTE','hm/*,hmr/*,__clockwork/*,clockwork/*'),
 
     # hhttp日志开关 是否记录
     'HP_HTTP_LOG'=>env('HP_HTTP_LOG', true),
     # hhttp日志开关 跑命令时的hhttp日志是否记录
     'HP_COMMAND_HTTP_LOG'=>env('HP_COMMAND_HTTP_LOG', false),
-    
+
     # sql日志开关 是否记录
     'HP_SQL_LOG'=>env('HP_SQL_LOG', true),
     # sql日志开关 跑命令时的sql是否记录
     'HP_SQL_COMMAND_LOG'=>env('HP_SQL_COMMAND_LOG', false),
+    # 允许不记录日志的路由
+    'HP_SQL_LOG_NOT_ROUTE'=>env('HP_SQL_LOG_NOT_ROUTE', 'hm/*,hmr/*,__clockwork/*'),
 
     # 长度限制
     'HM_API_HTTP_LOG_LENGTH'=>env('HM_API_HTTP_LOG_LENGTH', 5000),
@@ -49,7 +51,7 @@ return [
     # sql日志清理多久之前的日志 默认 60天前的
     'HM_SQL_LOG_CLEAN'=>env('HM_SQL_LOG_CLEAN', 60),
     #-------------------------------------------------------
-    
+
     #-----------------------------gateway代理配置-----------------------------
     # 最先执行的中间件 可在中间件中执行代理服务的数据清洗
     'GATE_FIRST_MID'                        =>explode(',', env('GATE_FIRST_MID')),

@@ -25,14 +25,14 @@ class ApiLogModel extends BaseModel
         try{
             $path = $request->path();
 
+//            # true 不否记录api日志
+//            if(!$this->isRecord($path)){
+//                return;
+//            }
+
             # 首位补充斜杠
             if (strpos($path, '/') !== 0) {
                 $path = '/'.$path;
-            }
-
-            # true 不否记录api日志
-            if(!$this->isRecord($path)){
-                return;
             }
 
             # 检验是否存在http日志表
@@ -47,7 +47,7 @@ class ApiLogModel extends BaseModel
                 if (strlen($output) > $HM_API_HTTP_LOG_LENGTH) {
                     $output = "长度超出，截取部分==>".mb_substr($output, 0, $HM_API_HTTP_LOG_LENGTH, "UTF-8")."...";
                 }
-       
+
                 self::insert([
                     'app_name'=>$_SERVER['APP_NAME']??'',
                     'hoo_traceid'=>ContextService::getHooTraceId(),
@@ -70,9 +70,8 @@ class ApiLogModel extends BaseModel
      * 是否记录api日志
      * @return bool
      */
-    private function isRecord($path): bool
+    public static function isRecord($path): bool
     {
-
         # true 不记录api 日志
         if(!Config::get('hhttp.HP_API_LOG')){
             return false;
