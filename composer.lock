@@ -148,34 +148,6 @@
             "time": "2023-12-11T17:09:12+00:00"
         },
         {
-            "name": "cloudladder/http",
-            "version": "1.2.4",
-            "source": {
-                "type": "git",
-                "url": "https://e.coding.net/cloudladder/php/cloudladder-http.git",
-                "reference": "bca23420f9a38305b11dded6b6cbcaa4ecbc736d"
-            },
-            "require": {
-                "guzzlehttp/guzzle": "^7.3",
-                "php": "^7.2.5 || ^8.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Cloudladder\\Http\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "authors": [
-                {
-                    "name": "nitianhua",
-                    "email": "nitianhua@qq.com"
-                }
-            ],
-            "description": "cloudladder http library",
-            "time": "2023-11-29T08:05:49+00:00"
-        },
-        {
             "name": "dflydev/dot-access-data",
             "version": "v3.0.3",
             "source": {

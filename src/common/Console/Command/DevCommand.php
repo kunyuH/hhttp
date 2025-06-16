@@ -5,6 +5,11 @@ namespace hhttp\io\common\Console\Command;
 use hhttp\io\common\Models\ApiLogModel;
 use hhttp\io\common\Models\HttpLogModel;
 use hhttp\io\common\Models\SqlLogModel;
+use hhttp\io\monitor\hm\Models\LogicalBlockModel;
+use hhttp\io\monitor\hm\Models\LogicalPipelinesArrangeModel;
+use hhttp\io\monitor\hm\Models\LogicalPipelinesModel;
+use hhttp\io\common\Models\LogsModel;
+
 use hhttp\io\http\HHttp;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -117,6 +122,89 @@ class DevCommand extends BaseCommand
                 $table->index('created_at','idx_created_at');
             });
             $this->info($SqlLog->getTableName().' 表创建成功');
+        }
+
+
+        # 逻辑块
+        $LogicalBlock = new LogicalBlockModel();
+        if (!hoo_schema()->hasTable($LogicalBlock->getTable())) {
+            hoo_schema()->create($LogicalBlock->getTable(), function (Blueprint $table) {
+                $table->integerIncrements('id')->comment('主键 自增id');
+                // 字段不为空 不加索引
+                $table->string('object_id',50)->comment('对象id');
+                $table->string('name',50)->comment('名称');
+                $table->string('group',50)->comment('分组');
+                $table->string('label')->nullable()->comment('标签');
+                $table->text('remark')->nullable()->comment('简介');
+                $table->longText('logical_block')->nullable()->comment('逻辑块');
+                $table->dateTime('created_at')->nullable();
+                $table->dateTime('updated_at')->nullable();
+                $table->dateTime('deleted_at')->nullable();
+
+                $table->index('object_id','idx_object_id');
+                $table->index('name','idx_name');
+                $table->index('group','idx_group');
+            });
+            $this->info($LogicalBlock->getTableName().'表创建成功');
+        }
+        $Logs = new LogsModel();
+        if (!hoo_schema()->hasTable($Logs->getTable())) {
+            hoo_schema()->create($Logs->getTable(), function (Blueprint $table) {
+                $table->bigIncrements('id')->comment('主键 自增id');
+                $table->string('name',100);
+                $table->string('label_a',100)->nullable();
+                $table->string('label_b',100)->nullable();
+                $table->string('label_c',100)->nullable();
+                $table->longText('content')->nullable();
+                $table->dateTime('created_at')->nullable();
+                $table->dateTime('updated_at')->nullable();
+
+                $table->index('name','idx_name');
+                $table->index('label_a','idx_label_a');
+                $table->index('label_b','idx_label_b');
+                $table->index('label_c','idx_label_c');
+            });
+            $this->info($Logs->getTableName().'表创建成功');
+        }
+        $LogicalPipelines = new LogicalPipelinesModel();
+        if (!hoo_schema()->hasTable($LogicalPipelines->getTable())) {
+            hoo_schema()->create($LogicalPipelines->getTable(), function (Blueprint $table) {
+                $table->integerIncrements('id')->comment('主键 自增id');
+                $table->string('rec_subject_id',50);
+                $table->string('name',50);
+                $table->string('group',50);
+                $table->string('label')->nullable();;
+                $table->text('remark')->nullable();
+                $table->json('setting')->nullable();
+                $table->dateTime('created_at')->nullable();
+                $table->dateTime('updated_at')->nullable();
+                $table->dateTime('deleted_at')->nullable();
+
+                $table->index('rec_subject_id','idx_rec_subject_id');
+                $table->index('name','idx_name');
+                $table->index('group','idx_group');
+            });
+            $this->info($LogicalPipelines->getTableName().'表创建成功');
+        }
+        $LogicalPipelinesArrange = new LogicalPipelinesArrangeModel();
+        if (!hoo_schema()->hasTable($LogicalPipelinesArrange->getTable())) {
+            hoo_schema()->create($LogicalPipelinesArrange->getTable(), function (Blueprint $table) {
+                $table->integerIncrements('id')->comment('主键 自增id');
+                $table->integer('logical_pipeline_id');
+                $table->integer('logical_block_id')->nullable();
+                $table->integer('next_id');
+                $table->longText('logical_block')->nullable();
+                $table->string('name',50)->nullable();
+                $table->enum('type',['custom','common'])->default('common');
+                $table->dateTime('created_at')->nullable();
+                $table->dateTime('updated_at')->nullable();
+
+                $table->index('logical_pipeline_id','idx_logical_pipeline_id');
+                $table->index('logical_block_id','idx_logical_block_id');
+                $table->index('next_id','idx_next_id');
+                $table->index('type','idx_type');
+            });
+            $this->info($LogicalPipelinesArrange->getTableName().' 表创建成功');
         }
 
         $this->info('操作成功');

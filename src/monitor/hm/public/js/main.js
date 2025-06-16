@@ -117,7 +117,7 @@ function edit_init(index){
  */
 function editorSetDifaultCode(index){
     editors[index].setValue("<\?php\n\n" +
-        "use hoo\\io\\monitor\\hm\\Services\\LogicalService;\n\n" +
+        "use hhttp\\io\\monitor\\hm\\Services\\LogicalService;\n\n" +
         "class Foo extends LogicalService{\n\n\tpublic function handle()\n\t{ \n\t\t\n\t}\n}");
     editors[index].moveCursorToPosition({row: 0, column: 0});
 }

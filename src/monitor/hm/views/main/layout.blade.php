@@ -1,5 +1,5 @@
 <?php
-$cdn = get_cdn().'/hm';
+$cdn = get_local().'/hm';
 ?>
 <!doctype html>
 <html lang="en">

@@ -21,6 +21,13 @@ if (! function_exists('get_cdn')) {
         return 'https://js.tuguaishou.com/other';
     }
 }
+if (! function_exists('get_local')) {
+    function get_local()
+    {
+//        return 'https://js.tuguaishou.com/other';
+        return '/hmr';
+    }
+}
 
 if (! function_exists('hoo_schema')) {
     function hoo_schema()
@@ -190,7 +197,7 @@ if (! function_exists('in_string')) {
      * 判断字符串中是否包含某几个字符
      * @return string
      */
-    function in_string($chars=[],$string)
+    function in_string($chars=[],$string='')
     {
         foreach ($chars as $char) {
             if (strpos($string, $char) !== false) {

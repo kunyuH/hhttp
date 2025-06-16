@@ -3,7 +3,8 @@
 namespace hhttp\io\http;
 
 
-use Cloudladder\Http\Client;
+//use Cloudladder\Http\Client;
+use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use hhttp\io\common\Exceptions\HooException;
 use hhttp\io\common\Models\HttpLogModel;
