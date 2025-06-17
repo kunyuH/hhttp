@@ -188,7 +188,7 @@ class HhttpServiceProvider extends ServiceProvider
                 Route::post('send', [GatewayController::class, 'gateway']);
             });
 
-        Route::prefix('hm')->group(function (){
+        Route::prefix('api/hm')->group(function (){
 
             Route::post('login', [LoginController::class,'login']);
             Route::post('logout', [LoginController::class,'logout']);
