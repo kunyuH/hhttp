@@ -265,7 +265,7 @@ class HhttpServiceProvider extends ServiceProvider
             });
         });
 
-        Route::prefix('hmr/hm')->group(function (){
+        Route::prefix('api/hmr/hm')->group(function (){
             Route::get('{path}',[IndexController::class,'webAsset'])->where('path', '.+');
         });
     }

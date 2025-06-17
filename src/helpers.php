@@ -25,7 +25,7 @@ if (! function_exists('get_local')) {
     function get_local()
     {
 //        return 'https://js.tuguaishou.com/other';
-        return '/hmr';
+        return '/api/hmr';
     }
 }
 
