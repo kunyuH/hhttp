@@ -21,6 +21,8 @@ use hhttp\io\monitor\hm\Controllers\LogicalPipelinesController;
 use hhttp\io\monitor\hm\Controllers\LoginController;
 use hhttp\io\monitor\hm\Controllers\LogViewerController;
 use hhttp\io\monitor\hm\Controllers\SqlViewerController;
+use hhttp\io\monitor\hm\Models\LogicalPipelinesModel;
+use hhttp\io\monitor\hm\Services\LogicalPipelinesApiRunService;
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -63,7 +65,7 @@ class HhttpServiceProvider extends ServiceProvider
                 /**
                  * 动态注册路由
                  */
-//                $this->registerRoutes();
+                $this->registerRoutes();
             });
 
         }catch (\Exception $e){}
@@ -269,4 +271,44 @@ class HhttpServiceProvider extends ServiceProvider
             Route::get('{path}',[IndexController::class,'webAsset'])->where('path', '.+');
         });
     }
+
+    /**
+     * 动态注册路由【逻辑线】
+     * @return void
+     */
+    public function registerRoutes()
+    {
+        try{
+            # 检查表是否存在
+            if (hoo_schema()->hasTable((new LogicalPipelinesModel())->getTable())) {
+                $pipelines = LogicalPipelinesModel::query()
+                    ->where(function (Builder $q){
+                        $q->whereNull('deleted_at')
+                            ->orWhere('deleted_at','');
+                    })
+                    ->get();
+                foreach ($pipelines as $pipeline){
+                    Route::prefix($pipeline->group)->group(function () use ($pipeline){
+
+                        $pipeline->setting = json_decode($pipeline->setting,true);
+                        $method = $pipeline->setting['method'] ?? 'get';
+
+                        $middleware = $pipeline->setting['middleware']??'';
+                        if($middleware){
+                            Route::middleware($middleware)->group(function () use ($method, $pipeline){
+                                Route::{$method}($pipeline->rec_subject_id, function () use ($pipeline){
+                                    return (new LogicalPipelinesApiRunService())->run(Request(),$pipeline);
+                                });
+                            });
+                        }else{
+                            Route::{$method}($pipeline->rec_subject_id, function () use ($pipeline){
+                                return (new LogicalPipelinesApiRunService())->run(Request(),$pipeline);
+                            });
+                        }
+                    });
+                }
+            }
+        }catch (Exception $e){}
+    }
+
 }

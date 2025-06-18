@@ -64,9 +64,9 @@ $cdn = get_cdn().'/hm';
                                    class="logical-pipelines-arrange"
                                    data-id="{{$pipeline->id}}"
                                 >{{$pipeline->name}}</a></td>
-                            <td>{{$pipeline->label}}</td>
                             <td>{{$pipeline->group}}</td>
                             <td>{{$pipeline->rec_subject_id}}</td>
+                            <td>{{$pipeline->label}}</td>
                             <td><a href="javascript:"
                                    class="RunLogicalPipeline"
                                    data-href={{jump_link('/hm/logical-pipelines/run?id='.$pipeline->id)}}
