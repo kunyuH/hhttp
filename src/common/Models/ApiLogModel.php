@@ -47,11 +47,17 @@ class ApiLogModel extends BaseModel
                 if (strlen($output) > $HM_API_HTTP_LOG_LENGTH) {
                     $output = "长度超出，截取部分==>".mb_substr($output, 0, $HM_API_HTTP_LOG_LENGTH, "UTF-8")."...";
                 }
+                $HP_API_LOG_USER_FILED = Config::get('hhttp.HP_API_LOG_USER_FILED');
+                if($HP_API_LOG_USER_FILED)
+                    $user_id =  defined($HP_API_LOG_USER_FILED) ? constant($HP_API_LOG_USER_FILED) : false;
+                else{
+                    $user_id = '';
+                }
 
                 self::insert([
                     'app_name'=>$_SERVER['APP_NAME']??'',
                     'hoo_traceid'=>ContextService::getHooTraceId(),
-                    'user_id'=>$request->input(Config::get('hhttp.HP_API_LOG_USER_FILED'),''),
+                    'user_id'=>$user_id,
                     'domain'=>$request->getHost().':'.$request->getPort(),
                     'path'=>$path,
                     'method'=>$request->method(),

@@ -23,8 +23,8 @@ return [
 
     # api日志开关 是否记录
     'HP_API_LOG'=>env('HP_API_LOG', true),
-    # 默认api日志中user_id 提取 request 对象内的属性
-    'HP_API_LOG_USER_FILED'=>env('HP_API_LOG_USER_FILED', 'member_id'),
+    # 默认api日志中user_id 提取 define 设置的全局常量
+    'HP_API_LOG_USER_FILED'=>env('HP_API_LOG_USER_FILED', 'HOO_USER_ID'),
     # 允许不记录日志的路由
     'HP_API_LOG_NOT_ROUTE'=>env('HP_API_LOG_NOT_ROUTE','hm/*,hmr/*,__clockwork/*,clockwork/*'),
 
