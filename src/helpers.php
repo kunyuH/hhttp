@@ -164,9 +164,9 @@ if (! function_exists('get_run_trace')) {
         $vendorPath = base_path('vendor');
         foreach (debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS) as $trace) {
             if(strpos($trace['file']??'',$vendorPath) === false){
-               if(!isset($trace['file']) or !isset($trace['line'])){
-                   continue;
-               }
+                if(!isset($trace['file']) or !isset($trace['line'])){
+                    continue;
+                }
                 # 获取当前应用所在根目录
                 $file = str_replace(base_path(), '', $trace['file']);
                 $run_trace = $file.':'.$trace['line'];
@@ -263,6 +263,7 @@ if (! function_exists('show_table')) {
         // 表头
         $headers = array_keys((array) $data[0]);
         $html .= '<thead><tr>';
+        $html .= '<th style="background:#f4f4f4;">#</th>'; // 添加行号表头
         foreach ($headers as $header) {
             $html .= '<th style="background:#f4f4f4;">' . htmlspecialchars($header) . '</th>';
         }
@@ -270,8 +271,10 @@ if (! function_exists('show_table')) {
 
         // 内容
         $html .= '<tbody>';
+        $index = 1;
         foreach ($data as $row) {
             $html .= '<tr>';
+            $html .= '<td>' . $index++ . '</td>'; // 行号
             foreach ((array) $row as $cell) {
                 $html .= '<td>' . htmlspecialchars($cell) . '</td>';
             }
