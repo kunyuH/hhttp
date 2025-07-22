@@ -251,6 +251,38 @@ if (! function_exists('get_directory_tree')) {
     }
 }
 
+if (! function_exists('show_table')) {
+    function show_table($data)
+    {
+        if (empty($data) || !count($data)) {
+            return "<p>无数据</p>";
+        }
+
+        $html = '<table border="1" cellpadding="8" cellspacing="0" style="border-collapse:collapse;width:100%;margin-top:10px;">';
+
+        // 表头
+        $headers = array_keys((array) $data[0]);
+        $html .= '<thead><tr>';
+        foreach ($headers as $header) {
+            $html .= '<th style="background:#f4f4f4;">' . htmlspecialchars($header) . '</th>';
+        }
+        $html .= '</tr></thead>';
+
+        // 内容
+        $html .= '<tbody>';
+        foreach ($data as $row) {
+            $html .= '<tr>';
+            foreach ((array) $row as $cell) {
+                $html .= '<td>' . htmlspecialchars($cell) . '</td>';
+            }
+            $html .= '</tr>';
+        }
+        $html .= '</tbody></table>';
+
+        return $html;
+    }
+}
+
 
 
 
