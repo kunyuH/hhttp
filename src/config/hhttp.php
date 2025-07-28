@@ -25,8 +25,10 @@ return [
     'HP_API_LOG'=>env('HP_API_LOG', true),
     # 默认api日志中user_id 提取 define 设置的全局常量
     'HP_API_LOG_USER_FILED'=>env('HP_API_LOG_USER_FILED', 'HOO_USER_ID'),
-    # 允许不记录日志的路由
+    # 允许不记录日志信息到数据库的路由
     'HP_API_LOG_NOT_ROUTE'=>env('HP_API_LOG_NOT_ROUTE','hm/*,hmr/*,__clockwork/*,clockwork/*'),
+    # 允许记录入参出参到日志文件的路由
+    'HP_API_LOG_FILE_ROUTE'=>env('HP_API_LOG_FILE_ROUTE',''),
 
     # hhttp日志开关 是否记录
     'HP_HTTP_LOG'=>env('HP_HTTP_LOG', true),
@@ -37,7 +39,7 @@ return [
     'HP_SQL_LOG'=>env('HP_SQL_LOG', true),
     # sql日志开关 跑命令时的sql是否记录
     'HP_SQL_COMMAND_LOG'=>env('HP_SQL_COMMAND_LOG', false),
-    # 允许不记录日志的路由
+    # 允许不记录日志信息到数据库的路由
     'HP_SQL_LOG_NOT_ROUTE'=>env('HP_SQL_LOG_NOT_ROUTE', 'hm/*,hmr/*,__clockwork/*'),
 
     # 长度限制

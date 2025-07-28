@@ -31,7 +31,7 @@ class ApiLogMid
 //            }
 //        }
 
-        if (ApiLogModel::isRecord($request->path())) {
+        if (ApiLogModel::isRecord($request->path()) and ApiLogModel::isRecordFile($request->path())) {
             Log::channel('debug')->log('info', "【接口入参】", [
                 '格式化展示'=>$input ?? [],
                 'json展示(流转请复制这块数据)'=>json_encode($input ?? [], JSON_UNESCAPED_UNICODE),
@@ -43,7 +43,7 @@ class ApiLogMid
         $t2 = microtime(true);
 
 //        if ($this->is_set_log($request->path())) {
-        if (ApiLogModel::isRecord($request->path())) {
+        if (ApiLogModel::isRecord($request->path()) and ApiLogModel::isRecordFile($request->path())) {
             Log::channel('debug')->log('info', "【接口出参】", [
                 '格式化展示'=>$output,
             ]);
