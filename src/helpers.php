@@ -250,6 +250,41 @@ if (! function_exists('get_directory_tree')) {
         return array_merge($folders, $files);
     }
 }
+if (! function_exists('show_table')) {
+    function show_table($data)
+    {
+        if (empty($data) || !count($data)) {
+            return "<p>无数据</p>";
+        }
+
+        $html = '<table border="1" cellpadding="8" cellspacing="0" style="border-collapse:collapse;width:100%;margin-top:10px;">';
+
+        // 表头
+        $headers = array_keys((array) $data[0]);
+        $html .= '<thead><tr>';
+        $html .= '<th style="background:#f4f4f4;">#</th>'; // 添加行号表头
+        foreach ($headers as $header) {
+            $html .= '<th style="background:#f4f4f4;">' . htmlspecialchars($header) . '</th>';
+        }
+        $html .= '</tr></thead>';
+
+        // 内容
+        $html .= '<tbody>';
+        $index = 1;
+        foreach ($data as $row) {
+            $html .= '<tr>';
+            $html .= '<td>' . $index++ . '</td>'; // 行号
+            foreach ((array) $row as $cell) {
+                $html .= '<td>' . htmlspecialchars($cell) . '</td>';
+            }
+            $html .= '</tr>';
+        }
+        $html .= '</tbody></table>';
+
+        return $html;
+    }
+}
+
 
 
 
