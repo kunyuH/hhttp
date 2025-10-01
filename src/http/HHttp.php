@@ -130,18 +130,23 @@ class HHttp extends Client
         }
         $json_show['response'] = $res_json;
 
-
-        # 记录日志 格式化记录数组
-        Log::channel('debug')->log('info', "【H-HTTP】", [
-            '耗时' => round($after_time - $before_time, 3) * 1000 . 'ms',
-            'run_trace' => get_run_trace(),
-            'url' => $uri,
-            'method' => $method,
-            'options' => $options,
-            'response' => $res_arr,
-            'err' => $err,
-            '入参出参json展示' => $json_show
-        ]);
+        // 先解析 URL
+        $path = parse_url($uri, PHP_URL_PATH);
+        // 去掉开头的斜杠
+        $path = ltrim($path, '/');
+        if (HttpLogModel::isRecord() and HttpLogModel::isRecordFile($path)) {
+            # 记录日志 格式化记录数组
+            Log::channel('debug')->log('info', "【H-HTTP】", [
+                '耗时' => round($after_time - $before_time, 3) * 1000 . 'ms',
+                'run_trace' => get_run_trace(),
+                'url' => $uri,
+                'method' => $method,
+                'options' => $options,
+                'response' => $res_arr,
+                'err' => $err,
+                '入参出参json展示' => $json_show
+            ]);
+        }
 
         (new HttpLogModel())->log(round($after_time - $before_time, 3) * 1000,
             parse_url($uri)['path']??'',

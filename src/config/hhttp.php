@@ -34,6 +34,10 @@ return [
     'HP_HTTP_LOG'=>env('HP_HTTP_LOG', true),
     # hhttp日志开关 跑命令时的hhttp日志是否记录
     'HP_COMMAND_HTTP_LOG'=>env('HP_COMMAND_HTTP_LOG', false),
+//    # 允许不记录日志信息到数据库的路由
+//    'HP_HTTP_LOG_NOT_ROUTE'=>env('HP_HTTP_LOG_NOT_ROUTE','hm/*,hmr/*,__clockwork/*,clockwork/*'),
+    # 允许记录入参出参到日志文件的路由 默认全部
+    'HP_HTTP_LOG_FILE_ROUTE'=>env('HP_HTTP_LOG_FILE_ROUTE','*'),
 
     # sql日志开关 是否记录
     'HP_SQL_LOG'=>env('HP_SQL_LOG', true),
