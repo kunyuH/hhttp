@@ -71,14 +71,14 @@ class LogSearch extends BaseService
             $escapedKeyword = "''";
         }else{
             // 确保关键词和目录路径是安全的.避免命令注入
-            $escapedKeyword = escapeshellarg($this->keyword);
+            $escapedKeyword = safe_shellarg($this->keyword);
         }
-        $escapedLogDir = escapeshellarg($this->logDir);
+        $escapedLogDir = safe_shellarg($this->logDir);
 
         // 如果指定扩展名.限制只搜索特定类型文件
         $findCommand = "find $escapedLogDir -type f";
         if (!empty($this->fileExtension)) {
-            $escapedExtension = escapeshellarg("*.$this->fileExtension");
+            $escapedExtension = safe_shellarg("*.$this->fileExtension");
             $findCommand .= " -name $escapedExtension";
         }
         $grep = "grep -in {$escapedKeyword}";

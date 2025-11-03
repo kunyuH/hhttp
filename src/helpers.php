@@ -284,6 +284,17 @@ if (! function_exists('show_table')) {
         return $html;
     }
 }
+if (!function_exists('safe_shellarg')) {
+    function safe_shellarg($arg) {
+        // null 或 空字符串处理
+        if ($arg === null || $arg === '') {
+            return "''";
+        }
+
+        // 将单引号安全转义
+        return "'" . str_replace("'", "'\\''", $arg) . "'";
+    }
+}
 
 
 
