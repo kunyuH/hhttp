@@ -115,6 +115,9 @@ class HHttp extends Client
             $res = mb_substr($res, 0, $max_res_length, "UTF-8") . "...";
         }
 
+        // 截取 options 中可能的大字段
+        $this->truncateOptions($options, $max_res_length);
+
         if (is_json($res)){
             $res_arr = json_decode($res, true);
             $res_json = json_encode($res_arr, JSON_UNESCAPED_UNICODE);
@@ -165,6 +168,26 @@ class HHttp extends Client
             $res_json,
             $err
         );
+    }
+
+    /**
+     * 截取 options 中可能的大字段，避免内存溢出
+     * @param array &$options
+     * @param int $maxLength
+     * @return void
+     */
+    protected function truncateOptions(array &$options, int $maxLength): void
+    {
+        foreach ($options as $key => &$value) {
+            if (is_string($value) && strlen($value) > $maxLength) {
+                $value = mb_substr($value, 0, $maxLength, "UTF-8") . "...";
+            } elseif (is_array($value)) {
+                $json = json_encode($value, JSON_UNESCAPED_UNICODE);
+                if (strlen($json) > $maxLength) {
+                    $value = "数组过大，已截取 (原始长度: " . strlen($json) . ")";
+                }
+            }
+        }
     }
 
     /**
