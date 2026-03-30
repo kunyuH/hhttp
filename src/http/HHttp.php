@@ -8,6 +8,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use hhttp\io\common\Exceptions\HooException;
 use hhttp\io\common\Models\HttpLogModel;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
 use Psr\Http\Message\ResponseInterface;
 
@@ -106,12 +107,21 @@ class HHttp extends Client
          */
         $res_arr = null;
         $res_json = '';
+        // 使用配置的最大长度限制，避免内存溢出
+        $max_res_length = Config::get('hhttp.HM_API_HTTP_LOG_LENGTH', 5000);
+
         if (is_json($res)){
             $res_arr = json_decode($res, true);
             $res_json = json_encode($res_arr, JSON_UNESCAPED_UNICODE);
         }else{
             $res_arr = $res;
             $res_json = $res;
+        }
+
+        // 立即截取响应数据，避免内存占用过大
+        if (strlen($res_json) > $max_res_length) {
+            $res_json = "长度超出，截取部分==>".mb_substr($res_json, 0, $max_res_length, "UTF-8")."...";
+            $res_arr = "长度超出，已截取";
         }
 
         $json_show['url'] = $uri;

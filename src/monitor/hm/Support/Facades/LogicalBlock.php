@@ -24,7 +24,7 @@ use Illuminate\Support\Facades\Facade;
  * 复制当前逻辑块 新增一个【通过id】
  * @method static copyNew($id)
  * @var LogicalBlockService::copyNew()
- *
+ * 
  * 逻辑块保存
  * @method static save($name,$group,$label,$logical_block,$remark='',$id=null)
  * @var LogicalBlockService::save()
@@ -49,15 +49,11 @@ use Illuminate\Support\Facades\Facade;
  * 逻辑块运行【通过源代码直接运行】
  * @method static execByCode($logical_block, $name = '', $resData = [])
  * @var LogicalBlockService::execByCode()
- *
+ * 
  * 获取逻辑块对象【通过对象id】
  * @method static getObject($object_id)
  * @var LogicalBlockService::getObject()
- *
- * 获取逻辑块代码【通过对象id】
- * @method static getBlock($object_id)
- * @var LogicalBlockService::getBlock()
- *
+ * 
  * see LogicalBlockService
  */
 class LogicalBlock extends Facade

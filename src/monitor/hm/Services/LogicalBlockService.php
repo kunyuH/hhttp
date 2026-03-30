@@ -316,24 +316,6 @@ class LogicalBlockService extends BaseService
     }
 
     /**
-     * 获取逻辑块代码【通过对象id】
-     * @param $object_id
-     * @return false|\Illuminate\Database\Eloquent\HigherOrderBuilderProxy|mixed
-     */
-    public function getBlock($object_id)
-    {
-        $block = LogicalBlockModel::query()
-            ->where(function (Builder $q){
-                $q->whereNull('deleted_at');
-            })
-            ->where('object_id',$object_id)->first();
-        if(empty($block)){
-            return false;
-        }
-
-        return $block->logical_block;
-    }
-    /**
      * 参数处理
      * 1. 上游逻辑块未传递参数，且 当前逻辑块不接收参数，则入参置空
      * 2. 上游逻辑块未传递参数，且 当前逻辑块接收参数，
