@@ -35,7 +35,15 @@ class HHttp extends Client
         try {
 
             try{
-                $res = $response->getBody()->getContents();
+                $body = $response->getBody();
+                $max_res_length = Config::get('hhttp.HM_API_HTTP_LOG_LENGTH', 5000);
+
+                // 检查响应体大小，避免内存溢出
+                if ($body->getSize() > $max_res_length) {
+                    $res = mb_substr($body->getContents(), 0, $max_res_length, "UTF-8") . "...";
+                } else {
+                    $res = $body->getContents();
+                }
             }catch (\Error $e){$res = '';}
 
             // 记录请求日志
