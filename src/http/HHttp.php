@@ -8,6 +8,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use hhttp\io\common\Exceptions\HooException;
 use hhttp\io\common\Models\HttpLogModel;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
 use Psr\Http\Message\ResponseInterface;
 
@@ -106,6 +107,17 @@ class HHttp extends Client
          */
         $res_arr = null;
         $res_json = '';
+        // 使用配置的最大长度限制，避免内存溢出
+        $max_res_length = Config::get('hhttp.HM_API_HTTP_LOG_LENGTH', 5000);
+
+        // 先截取响应数据，避免处理大数据时内存溢出
+        if (strlen($res) > $max_res_length) {
+            $res = mb_substr($res, 0, $max_res_length, "UTF-8") . "...";
+        }
+
+        // 截取 options 中可能的大字段
+        $this->truncateOptions($options, $max_res_length);
+
         if (is_json($res)){
             $res_arr = json_decode($res, true);
             $res_json = json_encode($res_arr, JSON_UNESCAPED_UNICODE);
@@ -157,6 +169,26 @@ class HHttp extends Client
             $res_json,
             $err
         );
+    }
+
+    /**
+     * 截取 options 中可能的大字段，避免内存溢出
+     * @param array &$options
+     * @param int $maxLength
+     * @return void
+     */
+    protected function truncateOptions(array &$options, int $maxLength): void
+    {
+        foreach ($options as $key => &$value) {
+            if (is_string($value) && strlen($value) > $maxLength) {
+                $value = mb_substr($value, 0, $maxLength, "UTF-8") . "...";
+            } elseif (is_array($value)) {
+                $json = json_encode($value, JSON_UNESCAPED_UNICODE);
+                if (strlen($json) > $maxLength) {
+                    $value = "数组过大，已截取 (原始长度: " . strlen($json) . ")";
+                }
+            }
+        }
     }
 
     /**
