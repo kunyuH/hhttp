@@ -10,6 +10,7 @@ use hhttp\io\monitor\hm\Models\LogicalPipelinesArrangeModel;
 use hhttp\io\monitor\hm\Models\LogicalPipelinesModel;
 use hhttp\io\monitor\hm\Support\Facades\LogicalBlock;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Ramsey\Uuid\Uuid;
@@ -88,6 +89,7 @@ class LogicalPipelinesService extends BaseService
                 'setting'=>json_encode($setting,JSON_UNESCAPED_UNICODE),
                 'updated_at'=>date('Y-m-d H:i:s')
             ]);
+            Cache::forget('LogicalPipelinesModel');
         }else{
             if(LogicalPipelinesModel::query()
                 ->where('id','<>',$id)
@@ -104,6 +106,7 @@ class LogicalPipelinesService extends BaseService
                 'created_at'=>date('Y-m-d H:i:s'),
                 'updated_at'=>date('Y-m-d H:i:s')
             ]);
+            Cache::forget('LogicalPipelinesModel');
         }
         return true;
     }
@@ -119,6 +122,7 @@ class LogicalPipelinesService extends BaseService
             'deleted_at'=>date('Y-m-d H:i:s'),
             'updated_at'=>date('Y-m-d H:i:s')
         ]);
+        Cache::forget('LogicalPipelinesModel');
         // 记录日志
         LogsModel::log(__FUNCTION__.':hm_logical_pipelines-删除',json_encode([
             'id'=>$id
