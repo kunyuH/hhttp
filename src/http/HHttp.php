@@ -8,7 +8,6 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use hhttp\io\common\Exceptions\HooException;
 use hhttp\io\common\Models\HttpLogModel;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
 use Psr\Http\Message\ResponseInterface;
 
@@ -35,15 +34,7 @@ class HHttp extends Client
         try {
 
             try{
-                $body = $response->getBody();
-                $max_res_length = Config::get('hhttp.HM_API_HTTP_LOG_LENGTH', 5000);
-
-                // 检查响应体大小，避免内存溢出
-                if ($body->getSize() > $max_res_length) {
-                    $res = mb_substr($body->getContents(), 0, $max_res_length, "UTF-8") . "...";
-                } else {
-                    $res = $body->getContents();
-                }
+                $res = $response->getBody()->getContents();
             }catch (\Error $e){$res = '';}
 
             // 记录请求日志
@@ -115,17 +106,6 @@ class HHttp extends Client
          */
         $res_arr = null;
         $res_json = '';
-        // 使用配置的最大长度限制，避免内存溢出
-        $max_res_length = Config::get('hhttp.HM_API_HTTP_LOG_LENGTH', 5000);
-
-        // 先截取响应数据，避免处理大数据时内存溢出
-        if (strlen($res) > $max_res_length) {
-            $res = mb_substr($res, 0, $max_res_length, "UTF-8") . "...";
-        }
-
-        // 截取 options 中可能的大字段
-        $this->truncateOptions($options, $max_res_length);
-
         if (is_json($res)){
             $res_arr = json_decode($res, true);
             $res_json = json_encode($res_arr, JSON_UNESCAPED_UNICODE);
@@ -150,23 +130,18 @@ class HHttp extends Client
         }
         $json_show['response'] = $res_json;
 
-        // 先解析 URL
-        $path = parse_url($uri, PHP_URL_PATH);
-        // 去掉开头的斜杠
-        $path = ltrim($path, '/');
-        if (HttpLogModel::isRecord() and HttpLogModel::isRecordFile($path)) {
-            # 记录日志 格式化记录数组
-            Log::channel('debug')->log('info', "【H-HTTP】", [
-                '耗时' => round($after_time - $before_time, 3) * 1000 . 'ms',
-                'run_trace' => get_run_trace(),
-                'url' => $uri,
-                'method' => $method,
-                'options' => $options,
-                'response' => $res_arr,
-                'err' => $err,
-                '入参出参json展示' => $json_show
-            ]);
-        }
+
+        # 记录日志 格式化记录数组
+        Log::channel('debug')->log('info', "【H-HTTP】", [
+            '耗时' => round($after_time - $before_time, 3) * 1000 . 'ms',
+            'run_trace' => get_run_trace(),
+            'url' => $uri,
+            'method' => $method,
+            'options' => $options,
+            'response' => $res_arr,
+            'err' => $err,
+            '入参出参json展示' => $json_show
+        ]);
 
         (new HttpLogModel())->log(round($after_time - $before_time, 3) * 1000,
             parse_url($uri)['path']??'',
@@ -176,26 +151,6 @@ class HHttp extends Client
             $res_json,
             $err
         );
-    }
-
-    /**
-     * 截取 options 中可能的大字段，避免内存溢出
-     * @param array &$options
-     * @param int $maxLength
-     * @return void
-     */
-    protected function truncateOptions(array &$options, int $maxLength): void
-    {
-        foreach ($options as $key => &$value) {
-            if (is_string($value) && strlen($value) > $maxLength) {
-                $value = mb_substr($value, 0, $maxLength, "UTF-8") . "...";
-            } elseif (is_array($value)) {
-                $json = json_encode($value, JSON_UNESCAPED_UNICODE);
-                if (strlen($json) > $maxLength) {
-                    $value = "数组过大，已截取 (原始长度: " . strlen($json) . ")";
-                }
-            }
-        }
     }
 
     /**
