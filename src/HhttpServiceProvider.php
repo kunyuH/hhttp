@@ -32,6 +32,7 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Query\Builder as QueryBuilder;
+use Illuminate\Support\Facades\Cache;
 use Exception;
 
 class HhttpServiceProvider extends ServiceProvider
@@ -280,13 +281,18 @@ class HhttpServiceProvider extends ServiceProvider
     {
         try{
             # 检查表是否存在
-            if (hoo_schema()->hasTable((new LogicalPipelinesModel())->getTable())) {
-                $pipelines = LogicalPipelinesModel::query()
-                    ->where(function (Builder $q){
-                        $q->whereNull('deleted_at')
-                            ->orWhere('deleted_at','');
-                    })
-                    ->get();
+            $is_LogicalPipelinesModel = Cache::remember('LogicalPipelinesModel',3600*24,function (){
+                return hoo_schema()->hasTable((new LogicalPipelinesModel())->getTable());
+            });
+            if ($is_LogicalPipelinesModel) {
+                $pipelines = Cache::remember('LogicalPipelinesModel',3600*24,function (){
+                    return LogicalPipelinesModel::query()
+                        ->where(function (Builder $q){
+                            $q->whereNull('deleted_at')
+                                ->orWhere('deleted_at','');
+                        })
+                        ->get();
+                });
                 foreach ($pipelines as $pipeline){
                     Route::prefix($pipeline->group)->group(function () use ($pipeline){
 
