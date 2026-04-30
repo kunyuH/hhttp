@@ -87,6 +87,9 @@ class HttpLogModel extends BaseModel
      */
     public static function isRecordFile($path): bool
     {
+        if ($path !== '' && $path[0] !== '/') {
+            $path = '/' . $path;
+        }
         # true 不记录hhttp 日志
         if(!Config::get('hhttp.HP_HTTP_LOG')){
             return false;

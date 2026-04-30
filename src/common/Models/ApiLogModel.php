@@ -79,6 +79,9 @@ class ApiLogModel extends BaseModel
      */
     public static function isRecord($path): bool
     {
+        if ($path !== '' && $path[0] !== '/') {
+            $path = '/' . $path;
+        }
         # true 不记录api 日志
         if(!Config::get('hhttp.HP_API_LOG')){
             return false;
@@ -102,6 +105,9 @@ class ApiLogModel extends BaseModel
      */
     public static function isRecordFile($path): bool
     {
+        if ($path !== '' && $path[0] !== '/') {
+            $path = '/' . $path;
+        }
         # true 不记录api 日志
         if(!Config::get('hhttp.HP_API_LOG')){
             return false;
