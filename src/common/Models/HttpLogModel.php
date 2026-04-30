@@ -24,7 +24,7 @@ class HttpLogModel extends BaseModel
     public function log($run_time,$path,$uri,$method,$options,$resStr,$err)
     {
         # true 不否记录http日志
-        if(!$this->isRecord()){
+        if(!self::isRecord()){
             return;
         }
 
@@ -61,7 +61,7 @@ class HttpLogModel extends BaseModel
      * 是否记录http日志
      * @return bool
      */
-    private function isRecord()
+    public static function isRecord()
     {
         # true 已开启HHTTP日志记录
         if(Config::get('hhttp.HP_HTTP_LOG')){
@@ -74,6 +74,29 @@ class HttpLogModel extends BaseModel
                     return false;
                 }
             }else{
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 是否允许出参入参记录到日志文件
+     * @param $path
+     * @return bool
+     */
+    public static function isRecordFile($path): bool
+    {
+        # true 不记录hhttp 日志
+        if(!Config::get('hhttp.HP_HTTP_LOG')){
+            return false;
+        }
+        $routes = Config::get('hhttp.HP_HTTP_LOG_FILE_ROUTE');
+        $routes = explode(',',$routes);
+
+        # 允许不记录日志的路由  匹配 存在则直接返回false
+        foreach ($routes as $route){
+            if(ho_fnmatchs($route,$path)){
                 return true;
             }
         }
