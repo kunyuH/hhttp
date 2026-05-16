@@ -37,6 +37,10 @@ use Illuminate\Support\Facades\Facade;
  * @method static delete($id)
  * @var LogicalBlockService::delete()
  *
+ * 获取逻辑块源代码
+ * @method static getBlock($object_id)
+ * @var LogicalBlockService::getBlock()
+ *
  * **************************运行**********************************
  * 逻辑块运行【通过id】
  * @method static execById($id, $resData = [], $out_mode='data')

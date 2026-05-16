@@ -226,6 +226,20 @@ class LogicalBlockService extends BaseService
     }
 
     /**
+     * 获取逻辑块源代码
+     * @param $object_id
+     * @return \Illuminate\Database\Eloquent\HigherOrderBuilderProxy|mixed
+     */
+    public function getBlock($object_id)
+    {
+        return LogicalBlockModel::query()
+            ->where(function (Builder $q){
+                $q->whereNull('deleted_at');
+            })
+            ->where('object_id',$object_id)->first()->logical_block;
+    }
+
+    /**
      * 逻辑块运行【通过源码直接运行】
      * @param $logical_block
      * @param $name
